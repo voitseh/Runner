@@ -1,0 +1,21 @@
+{
+  "name": "Runner",
+  "version": "1.0.0",
+  "description": "Runner game created using TypeScript and PixiJS",
+  "main": "./index.html",
+  "scripts": {
+    "build": "webpack"
+  },
+  "author": "Voitseh Kaminsky",
+  "devDependencies": {
+  
+    "@types/pixi.js": "^4.7.1",
+    "ts-loader": "^1.3.3",
+    "typescript": "^2.1.4",
+    "webpack": "^1.14.0"
+  },
+  "dependencies": {
+   
+    "pixi.js": "^4.7.1"
+  }
+}

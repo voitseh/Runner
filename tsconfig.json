@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es5",
+        "noImplicitAny": true,
+        "sourceMap": true,
+        "removeComments": true,
+        "typeRoots": [
+          "./node_modules/@types"
+        ]
+    },
+    "files": [
+      "./src/main.ts"
+    ]
+}
