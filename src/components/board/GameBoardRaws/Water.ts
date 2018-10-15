@@ -15,8 +15,6 @@ export class Water extends RawItem{
     
     obstaclesFactory: ObstacleFactory;
 
-    rawType = "water";
-
     constructor(public posX: number, public posY: number){
         super("./images/lanes/water.png", posX, posY);
         this.obstaclesFactory = new ObstacleFactory();
@@ -24,7 +22,10 @@ export class Water extends RawItem{
         this.carFirstSpeedInc = Utils.randomIntFromInterval(1, 5);
         this.carSecondSpeedInc = Utils.randomIntFromInterval(1, 5);
         let timerId = setInterval(() => this.allObstacles.push(this.createLogs()), 1000 | 2000 | 3000);
+        this.setType("water")
     }
+
+    
 
     createLogs():Log{
         var newLog:Log = null; 

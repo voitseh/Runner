@@ -21,8 +21,7 @@ export class Road extends RawItem {
     private MOVING_DIRECTION:Direction;
     
     obstaclesFactory: ObstacleFactory;
-    rawType = "road";
-
+   
     constructor(public posX: number, public posY: number){
         super("./images/lanes/road.png", posX, posY);
         this.obstaclesFactory = new ObstacleFactory();
@@ -30,7 +29,7 @@ export class Road extends RawItem {
         this.carFirstSpeedInc = Utils.randomIntFromInterval(1, 5);
         this.carSecondSpeedInc = Utils.randomIntFromInterval(1, 5);
         let timerId = setInterval(() => this.allObstacles.push(this.createCars()), 1000 | 2000 | 3000);
-  
+        this.setType("road")
     }
     
    

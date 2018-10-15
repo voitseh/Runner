@@ -7,7 +7,7 @@ export class RawItem {
 
   public static readonly RAW_HEIGHT = 40;
 
-  public rawType: string;
+  private rawType: string;
   
   private readonly stage: Container;
 
@@ -24,7 +24,6 @@ export class RawItem {
     stage.addChild(sprite);
     stage.interactive = true;
     this.stage = stage;
-    // stage.on('mousedown', function (e:any) {()=>getPos})
     this.allObstacles = []
   }
 
@@ -32,7 +31,11 @@ export class RawItem {
       return this.rawType;
   }
 
-  getStage(): Container{  console.log("WWWWWWWWWWWWWW")
+  setType(rawType:string){
+    this.rawType = rawType;
+  }
+
+  getStage(): Container{  
     return this.stage;
   }
 

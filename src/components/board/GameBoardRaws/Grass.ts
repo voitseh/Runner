@@ -6,7 +6,6 @@ import {ObstacleFactory} from "../../../utilities/ObstacleFactory";
 
 export class Grass extends RawItem{
    
-    
     private TREE_MIN_COUNT = 3;
     private TREE_MAX_COUNT = 6;
 
@@ -15,15 +14,15 @@ export class Grass extends RawItem{
     private TREE_MIN_POS_Y:any;
     private TREE_MAX_POS_Y:any;
 
-    rawType = "grass";
-
     constructor(public posX: number, public posY: number){
         super("./images/lanes/grass.png", posX, posY);
        
         this.TREE_MIN_POS_Y = this.getPosition()[1] +  Obstacle.OBSTACLE_HEIGHT;
         this.TREE_MAX_POS_Y =  this.getPosition()[1] + RawItem.RAW_HEIGHT - Obstacle.OBSTACLE_HEIGHT;
 
-        this.buildGrassSprites()
+        this.buildGrassSprites();
+
+        this.setType("grass");
     }
 
     private buildGrassSprites() {
