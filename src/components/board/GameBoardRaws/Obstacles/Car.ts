@@ -36,8 +36,8 @@ export class Car extends Obstacle{
         this.sprite.x -= speedInc;
       }
 
-    onCollisionWithPlayer(player: Player) {
-        throw new Error("Method not implemented.");
+      checkCollisionWithPlayer(player:Player):boolean {
+        return false;
     }
 
 }

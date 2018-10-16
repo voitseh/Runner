@@ -52,7 +52,7 @@ export abstract class Obstacle {
     return [this.posX, this.posY]
   }
 
-  abstract onCollisionWithPlayer(player: Player):any
+  abstract checkCollisionWithPlayer(player:Player):boolean
 
 }
 
