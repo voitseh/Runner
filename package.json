@@ -8,14 +8,12 @@
   },
   "author": "Voitseh Kaminsky",
   "devDependencies": {
-  
     "@types/pixi.js": "^4.7.1",
     "ts-loader": "^1.3.3",
     "typescript": "^2.1.4",
     "webpack": "^1.14.0"
   },
   "dependencies": {
-   
     "pixi.js": "^4.7.1"
   }
 }

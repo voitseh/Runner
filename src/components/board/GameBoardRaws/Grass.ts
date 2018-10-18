@@ -1,16 +1,12 @@
-import {RawItem} from "./RawItem";
-import {Utils} from "../../../utilities/Utils";
-import {Obstacle} from "./Obstacles/Obstacle";
-import {Setting} from "../../../Settings";
-import {ObstacleFactory} from "../../../utilities/ObstacleFactory";
+import { RawItem } from "./RawItem";
+import { Utils } from "../../../utilities/Utils";
+import { Obstacle } from "./Obstacles/Obstacle";
+import { ObstacleFactory } from "../../../utilities/ObstacleFactory";
 
 export class Grass extends RawItem{
    
     private TREE_MIN_COUNT = 3;
     private TREE_MAX_COUNT = 6;
-
-    private TREE_MIN_POS_X = 0;
-    private TREE_MAX_POS_X = Setting.CANVAS_WIDTH - Obstacle.OBSTACLE_WIDTH;
     private TREE_MIN_POS_Y:any;
     private TREE_MAX_POS_Y:any;
 
@@ -33,8 +29,8 @@ export class Grass extends RawItem{
         const obstaclesFactory = new ObstacleFactory();
         let treesCount: number = this.getRandomTreeCount(this.TREE_MIN_COUNT, this.TREE_MAX_COUNT);
         
-        for (let index = 0; index < treesCount; index++) {
-            let treePosX =  this.getTreePosX(this.TREE_MIN_POS_X, this.TREE_MAX_POS_X);
+        for (let index = 1; index <= treesCount; index++) {
+            let treePosX =  this.getTreePosX((index*100 - 80), (index*100-20));
             let treePosY =  this.getTreePosY(this.TREE_MIN_POS_Y, this.TREE_MAX_POS_Y);
             this.allObstacles.push(obstaclesFactory.createObstacle("tree", treePosX, treePosY));
             

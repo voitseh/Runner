@@ -11,19 +11,6 @@
         flex-direction: column;
       }
 
-      button {
-        margin-bottom: 30px;
-        font-size: 20px;
-        background-color: skyblue; /* Green */
-        border: none;
-        color: white;
-        cursor: pointer;
-        padding: 10px 15px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-      }
-
       .hide {
         visibility: hidden;
       }

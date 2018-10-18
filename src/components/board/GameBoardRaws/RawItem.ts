@@ -11,6 +11,8 @@ export class RawItem {
   
   private readonly stage: Container;
 
+  protected sprite: Sprite;
+
   public allObstacles: any[]
 
   constructor(private imgPath: string, public posX: number, public posY: number) {
@@ -20,6 +22,7 @@ export class RawItem {
     sprite.height = RawItem.RAW_HEIGHT;
     sprite.position.x = posX;
     sprite.position.y = posY;
+    this.sprite = sprite;
     let stage = new PIXI.Container();
     stage.addChild(sprite);
     stage.interactive = true;

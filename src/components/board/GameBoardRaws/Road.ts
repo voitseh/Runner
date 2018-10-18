@@ -1,9 +1,9 @@
 import { RawItem, Direction } from "./RawItem";
 import { Obstacle } from "./Obstacles/Obstacle";
 import { Utils } from "../../../utilities/Utils";
-import {Setting} from "../../../Settings";
 import { ObstacleFactory } from "../../../utilities/ObstacleFactory";
 import { Car } from "./Obstacles/Car";
+import { GameBoard } from "../GameBoard";
 
 
 const carAddresses = [
@@ -28,7 +28,7 @@ export class Road extends RawItem {
         this.MOVING_DIRECTION = this.chooseMovingDirection();
         this.carFirstSpeedInc = Utils.randomIntFromInterval(1, 5);
         this.carSecondSpeedInc = Utils.randomIntFromInterval(1, 5);
-        let timerId = setInterval(() => this.allObstacles.push(this.createCars()), 1000 | 2000 | 3000);
+        let timerId = setInterval(() => this.allObstacles.push(this.createCars()), 1000 | 2000 );
         this.setType("road")
     }
     
@@ -47,9 +47,9 @@ export class Road extends RawItem {
     getPosX(): number{
         let x;
         if(this.MOVING_DIRECTION == Direction.Left)
-            x = Utils.randomIntFromInterval( Setting.CANVAS_WIDTH-Obstacle.OBSTACLE_WIDTH, Setting.CANVAS_WIDTH*2 );
+            x = Utils.randomIntFromInterval(GameBoard.BOARD_WIDTH-Obstacle.OBSTACLE_WIDTH, GameBoard.BOARD_WIDTH*2 );
         else if(this.MOVING_DIRECTION == Direction.Right)
-            x = Utils.randomIntFromInterval(-Setting.CANVAS_WIDTH, 0);
+            x = Utils.randomIntFromInterval(-GameBoard.BOARD_WIDTH, 0);
         return x;
     }
 

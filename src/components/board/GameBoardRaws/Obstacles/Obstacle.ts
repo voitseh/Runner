@@ -1,5 +1,6 @@
 import {Sprite, Container} from 'pixi.js';
 import {Player} from '../../../../utilities/Player'
+import { Direction } from '../RawItem';
 
 export abstract class Obstacle { 
 
@@ -8,6 +9,10 @@ export abstract class Obstacle {
   public static OBSTACLE_WIDTH = 15;
 
   public static readonly OBSTACLE_HEIGHT = 15;
+
+  DIRECTION: Direction;
+
+  speedInc: number;
 
   protected  stage: Container;
 
@@ -20,9 +25,6 @@ export abstract class Obstacle {
   protected setSprite(imgPath: string, posX: number, posY: number){
     let texture = PIXI.loader.resources[imgPath].texture;
     let sprite = new PIXI.Sprite(texture);
-    if(this.obstacleType == "log")
-    sprite.width = 40;
-    else
     sprite.width = Obstacle.OBSTACLE_WIDTH;
     sprite.height = Obstacle.OBSTACLE_HEIGHT;
     sprite.position.x = posX;

@@ -12,16 +12,8 @@ export class Tree extends Obstacle {
     }
 
     checkCollisionWithPlayer(player:Player):any {
-        return Utils.isIntersecting(player.sprite, this.sprite)
+        return  Utils.isIntersecting(player.sprite, this.sprite)
     
-        // if (!(x + width < this.posX || this.posX + this.sprite.width < x || this.sprite.y < y)) {
-        //     console.log("first")
-        //     return true;
-        //   }
-        //   if (!(x + width < this.posX || this.posX + this.sprite.width < x || y + height < this.posY)) {
-        //     console.log("second")
-        //     return true;
-        //   }
-        //   return false;
+    
     }
 }

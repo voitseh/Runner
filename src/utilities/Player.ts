@@ -1,4 +1,3 @@
-import { Setting } from "../Settings";
 import { Obstacle } from "../components/board/GameBoardRaws/Obstacles/Obstacle";
 import { Container } from "pixi.js";
 import { RawItem } from "../components/board/GameBoardRaws/RawItem";
@@ -37,11 +36,14 @@ const FORWARD_FRAME_LIST = [
 
 
 export class Player{
+  
     private PLAYER_WIDTH = 20;
     private PLAYER_HEIGHT = 30;
     private speed: number = 7;
     public sprite = new PIXI.Sprite();
     private stage:Container;
+
+    public livesCount:number;
   
     private textureCounterForward: number = 0;
     private updateTextureForward = () => { 
@@ -78,7 +80,7 @@ export class Player{
     }
 
     updateSpriteBack = () => {
-      if (!(this.sprite.y > Setting.CANVAS_HEIGHT - this.sprite.height))  this.sprite.y += this.speed;
+      if (!(this.sprite.y > GameBoard.BOARD_HEIGHT - this.sprite.height))  this.sprite.y += this.speed;
     }
 
     updateSpriteLeft = () => { 
@@ -86,12 +88,12 @@ export class Player{
     }
 
     updateSpriteRight = () => {
-      if (!(this.sprite.x > Setting.CANVAS_WIDTH - this.sprite.width - 5))  this.sprite.x += this.speed;
+      if (!(this.sprite.x > GameBoard.BOARD_WIDTH - this.sprite.width - 5))  this.sprite.x += this.speed;
     }
   
     reset() {
-      this.sprite.x = Setting.CANVAS_WIDTH / 2;
-      this.sprite.y = Setting.CANVAS_HEIGHT - this.PLAYER_HEIGHT - 2;
+      this.sprite.x = GameBoard.BOARD_WIDTH / 2;
+      this.sprite.y = GameBoard.BOARD_HEIGHT - this.PLAYER_HEIGHT - 2;
       // this.isDied = false;
     }
     
