@@ -140,14 +140,18 @@ export class GameBoard implements RenderableElement, UpdateableElement {
             obstacle = (obstacle as Log)
 
             if (obstacle.DIRECTION == Direction.Left && this.player.sprite.x > 0)
-                this.player.sprite.x -= (Setting.GAME_SPEED_X / 60 + obstacle.speedInc / 2);
-            else if (obstacle.DIRECTION == Direction.Left)
+                this.player.sprite.x -= (Setting.GAME_SPEED_X / 80 + obstacle.speedInc / 2);
+            else if (obstacle.DIRECTION == Direction.Left){
                 this.removeLifeOnColision();
+                this.player.updateTextureDie();
+            }
 
             if (obstacle.DIRECTION == Direction.Right && this.player.sprite.x < Setting.BOARD_WIDTH - Setting.OBSTACLE_WIDTH)
-                this.player.sprite.x += (Setting.GAME_SPEED_X / 60 + obstacle.speedInc / 2);
-            else if (obstacle.DIRECTION == Direction.Right)
+                this.player.sprite.x += (Setting.GAME_SPEED_X / 80 + obstacle.speedInc / 2);
+            else if (obstacle.DIRECTION == Direction.Right){
                 this.removeLifeOnColision();
+                this.player.updateTextureDie();
+            }
         } else 
             this.isPlayerOnLog = false;
 
