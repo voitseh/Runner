@@ -1,32 +1,26 @@
-import {Sprite, Container} from 'pixi.js';
-import {Player} from '../../../../utilities/Player'
+import { Sprite, Container } from 'pixi.js';
+import { Player } from '../../../../utilities/Player'
 import { Direction } from '../RawItem';
+import { Setting } from '../../../../Settings';
 
-export abstract class Obstacle { 
-
-  readonly obstacleType: string;
-
-  public static OBSTACLE_WIDTH = 15;
-
-  public static readonly OBSTACLE_HEIGHT = 15;
+export abstract class Obstacle {
 
   DIRECTION: Direction;
 
-  speedInc: number;
-
-  protected  stage: Container;
-
+  readonly obstacleType: string;
+  public speedInc: number;
+  protected stage: Container;
   protected sprite: Sprite;
 
   constructor(private imgPath: string, public posX: number, public posY: number) {
-    this.setSprite(imgPath, posX, posY)
+    this.setSprite(imgPath, posX, posY);
   }
 
-  protected setSprite(imgPath: string, posX: number, posY: number){
+  protected setSprite(imgPath: string, posX: number, posY: number) {
     let texture = PIXI.loader.resources[imgPath].texture;
     let sprite = new PIXI.Sprite(texture);
-    sprite.width = Obstacle.OBSTACLE_WIDTH;
-    sprite.height = Obstacle.OBSTACLE_HEIGHT;
+    sprite.width = Setting.OBSTACLE_WIDTH;
+    sprite.height = Setting.OBSTACLE_HEIGHT;
     sprite.position.x = posX;
     sprite.position.y = posY;
     this.sprite = sprite;
@@ -35,26 +29,24 @@ export abstract class Obstacle {
     this.stage = stage;
   }
 
-  
-
-  getType(): string{
+  public getType(): string {
     return this.obstacleType;
   }
 
-  getStage(): Container{
+  public getStage(): Container {
     return this.stage;
   }
 
-  setPosition(posX: number, posY: number){
+  public setPosition(posX: number, posY: number) {
     this.posX = posX;
     this.posY = posY;
   }
 
-  getPosition():[number, number]{
+  public getPosition(): [number, number] {
     return [this.posX, this.posY]
   }
 
-  abstract checkCollisionWithPlayer(player:Player):boolean
+  abstract checkCollisionWithPlayer(player: Player): boolean
 
 }
 

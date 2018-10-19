@@ -6,14 +6,9 @@ import { Container, Sprite } from "pixi.js";
 export class FinishBoard extends StartBoard {
 
     protected POS_Y = 0;
-   
-    constructor(){
+
+    constructor() {
         super(250, 0);
         this.POS_Y = 0;
-
     }
-
-    
-        
-        
 }

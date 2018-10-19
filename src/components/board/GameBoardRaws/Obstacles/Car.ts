@@ -1,40 +1,40 @@
 import { Obstacle } from "./Obstacle";
-import { Road } from "../Road";
 import { Player } from "../../../../utilities/Player";
 import { Direction } from "../RawItem";
 import { Utils } from "../../../../utilities/Utils";
 import { Game } from "../../../../Game";
 import { GameBoard } from "../../GameBoard";
+import { Setting } from "../../../../Settings";
 
-export class Car extends Obstacle{
+export class Car extends Obstacle {
 
-    obstacleType = "car";
+    public obstacleType = "car";
 
-    constructor(imgPath: string, public posX: number, public posY: number){
-        super(imgPath , posX, posY);
+    constructor(imgPath: string, public posX: number, public posY: number) {
+        super(imgPath, posX, posY);
     }
 
-    update() {
-        if(this.DIRECTION == Direction.Left){
-           this.sprite.x -= Game.GAME_SPEED_X / 60;
-             this.addSpeedLeft(this.speedInc);
-             if (this.sprite.x < -Obstacle.OBSTACLE_WIDTH)
+    public update() {
+        if (this.DIRECTION == Direction.Left) {
+            this.sprite.x -= Setting.GAME_SPEED_X / 60;
+            this.addSpeedLeft(this.speedInc);
+            if (this.sprite.x < -Setting.OBSTACLE_WIDTH)
                 this.stage.parent.removeChild(this.stage);
-        }else if(this.DIRECTION == Direction.Right){
-            this.sprite.x += Game.GAME_SPEED_X / 60;
-              this.addSpeedRight(this.speedInc);
-             if (this.sprite.x > GameBoard.BOARD_WIDTH)
+        } else if (this.DIRECTION == Direction.Right) {
+            this.sprite.x += Setting.GAME_SPEED_X / 60;
+            this.addSpeedRight(this.speedInc);
+            if (this.sprite.x > Setting.BOARD_WIDTH)
                 this.stage.parent.removeChild(this.stage);
         }
     }
-    addSpeedRight(speedInc: number) {
+    public addSpeedRight(speedInc: number) {
         this.sprite.x += speedInc;
     }
-    addSpeedLeft(speedInc: number) {
+    public addSpeedLeft(speedInc: number) {
         this.sprite.x -= speedInc;
-      }
+    }
 
-      checkCollisionWithPlayer(player:Player):any {
+    public checkCollisionWithPlayer(player: Player): any {
         return Utils.isIntersecting(player.sprite, this.sprite);
-      }
+    }
 }
