@@ -1,10 +1,10 @@
-import { RawItem, Direction } from "./RawItem";
+import { RawItem } from "./RawItem";
 import { Obstacle } from "./Obstacles/Obstacle";
 import { Utils } from "../../../utilities/Utils";
 import { ObstacleFactory } from "../../../utilities/ObstacleFactory";
 import { Car } from "./Obstacles/Car";
 import { GameBoard } from "../GameBoard";
-import { Setting } from "../../../Settings";
+import { Setting, Direction } from "../../../Settings";
 
 export class Road extends RawItem {
 
@@ -17,17 +17,16 @@ export class Road extends RawItem {
     public obstaclesFactory: ObstacleFactory;
 
     constructor(public posX: number, public posY: number) {
-        super("./images/lanes/road.png", posX, posY);
+        super("road.png", posX, posY);
         this.obstaclesFactory = new ObstacleFactory();
         this.MOVING_DIRECTION = this.chooseMovingDirection();
         this.carFirstSpeedInc = Utils.randomIntFromInterval(1, 5);
         this.carSecondSpeedInc = Utils.randomIntFromInterval(1, 5);
-        // let timerId = setInterval(() => this.allObstacles.push(this.createCars()), 1000 | 2000 );
         this.setType("road");
     }
 
     public startCarsMoving() {
-        let timerId = setInterval(() => this.allObstacles.push(this.createCars()), 1000 | 2000);
+        let timerId = setInterval(() => this.allObstacles.push(this.createCars()), 1000 | 1500);
     }
 
     public createCars(): Car {
@@ -58,7 +57,6 @@ export class Road extends RawItem {
         if (direction == Direction.Right) {
             return Utils.getRandomBool() ? Setting.CAR_ADDRESSES[0] : Setting.CAR_ADDRESSES[2];
         }
-
         if (direction == Direction.Left) {
             return Utils.getRandomBool() ? Setting.CAR_ADDRESSES[1] : Setting.CAR_ADDRESSES[3];
         }

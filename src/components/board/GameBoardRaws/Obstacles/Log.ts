@@ -1,10 +1,9 @@
 import { Obstacle } from "./Obstacle"
 import { Player } from "../../../../utilities/Player";
-import { Direction } from "../RawItem";
 import { Utils } from "../../../../utilities/Utils";
 import { GameBoard } from "../../GameBoard";
 import { Game } from "../../../../Game";
-import { Setting } from "../../../../Settings";
+import { Setting, Direction } from "../../../../Settings";
 
 export class Log extends Obstacle {
 
@@ -18,16 +17,24 @@ export class Log extends Obstacle {
 
     public update() {
         if (this.DIRECTION == Direction.Left) {
-            this.sprite.x -= Setting.GAME_SPEED_X / 80;
-            this.addSpeedLeft(this.speedInc)
-            if (this.sprite.x < 0)
-                this.stage.parent.removeChild(this.stage);
+            this.updateLeftDirectedLog();
         } else {
-            this.sprite.x += Setting.GAME_SPEED_X / 80;
-            this.addSpeedRight(this.speedInc)
-            if (this.sprite.x > Setting.BOARD_WIDTH)
-                this.stage.parent.removeChild(this.stage);
+           this.updateRightDirectedLog();
         }
+    }
+
+    private updateLeftDirectedLog(){
+        this.sprite.x -= Setting.GAME_SPEED_X / 80;
+        this.addSpeedLeft(this.speedInc)
+        if (this.sprite.x < 0)
+            this.stage.parent.removeChild(this.stage);
+    }
+
+    private updateRightDirectedLog(){
+        this.sprite.x += Setting.GAME_SPEED_X / 80;
+        this.addSpeedRight(this.speedInc)
+        if (this.sprite.x > Setting.BOARD_WIDTH)
+            this.stage.parent.removeChild(this.stage);
     }
 
     public addSpeedRight(speedInc: number) {

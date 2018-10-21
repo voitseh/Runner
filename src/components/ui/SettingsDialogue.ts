@@ -13,10 +13,9 @@ export class SettingsDialogue {
     show() {
         var c = confirm(this.dialogText);
         if (c == true) {
-            this.game.onSettingsAllowedRequest();
-        }
+            }
         else {
-
+            
         }
     }
 }

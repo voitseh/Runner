@@ -1,10 +1,9 @@
 import { Obstacle } from "./Obstacle";
 import { Player } from "../../../../utilities/Player";
-import { Direction } from "../RawItem";
 import { Utils } from "../../../../utilities/Utils";
 import { Game } from "../../../../Game";
 import { GameBoard } from "../../GameBoard";
-import { Setting } from "../../../../Settings";
+import { Setting, Direction } from "../../../../Settings";
 
 export class Car extends Obstacle {
 
@@ -16,17 +15,26 @@ export class Car extends Obstacle {
 
     public update() {
         if (this.DIRECTION == Direction.Left) {
-            this.sprite.x -= Setting.GAME_SPEED_X / 60;
-            this.addSpeedLeft(this.speedInc);
-            if (this.sprite.x < -Setting.OBSTACLE_WIDTH)
-                this.stage.parent.removeChild(this.stage);
+           this.updateLeftDirectedCar();
         } else if (this.DIRECTION == Direction.Right) {
-            this.sprite.x += Setting.GAME_SPEED_X / 60;
-            this.addSpeedRight(this.speedInc);
-            if (this.sprite.x > Setting.BOARD_WIDTH)
-                this.stage.parent.removeChild(this.stage);
+           this.updateRightDirectedCar();
         }
     }
+
+    private updateLeftDirectedCar(){
+        this.sprite.x -= Setting.GAME_SPEED_X / 60;
+        this.addSpeedLeft(this.speedInc);
+        if (this.sprite.x < -Setting.OBSTACLE_WIDTH)
+            this.stage.parent.removeChild(this.stage);
+    }
+
+    private updateRightDirectedCar(){
+        this.sprite.x += Setting.GAME_SPEED_X / 60;
+        this.addSpeedRight(this.speedInc);
+        if (this.sprite.x > Setting.BOARD_WIDTH)
+            this.stage.parent.removeChild(this.stage);
+    }
+
     public addSpeedRight(speedInc: number) {
         this.sprite.x += speedInc;
     }

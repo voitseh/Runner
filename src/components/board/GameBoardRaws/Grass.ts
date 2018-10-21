@@ -10,18 +10,13 @@ export class Grass extends RawItem{
     private treeMaxPosY:any;
 
     constructor(public posX: number, public posY: number){
-        super("./images/lanes/grass.png", posX, posY);
-        this.treeMinPosY = this.getPosition()[1] +  Setting.OBSTACLE_HEIGHT;
-        this.treeMaxPosY =  this.getPosition()[1] + Setting.RAW_HEIGHT - Setting.OBSTACLE_HEIGHT;
-        this.buildGrassSprites();
+        super("grass.png", posX, posY);
         this.setType("grass");
     }
 
-    private buildGrassSprites() {
-       this.setObstacles()
-    }
-
-    private setObstacles() {
+    public createTrees() { 
+        this.treeMinPosY = this.getPosition()[1] +  Setting.OBSTACLE_HEIGHT;
+        this.treeMaxPosY =  this.getPosition()[1] + Setting.RAW_HEIGHT - Setting.OBSTACLE_HEIGHT;
         const obstaclesFactory = new ObstacleFactory();
         let treesCount: number = this.getRandomTreeCount(Setting.TREE_MIN_COUNT, Setting.TREE_MAX_COUNT);
         

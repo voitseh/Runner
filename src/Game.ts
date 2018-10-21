@@ -4,21 +4,28 @@ import { ButtonsBar } from "./components/ui/ButtonsBar";
 import { RenderableElement } from "./utilities/RenderableElement";
 import { LivesBoard } from "./components/ui/LivesBoard";
 import { SettingsDialogue } from "./components/ui/SettingsDialogue";
+import { Setting } from "./Settings";
+import { GameStatus } from "./Settings";
+import { Car } from "./components/board/GameBoardRaws/Obstacles/Car";
 
 export class Game {
 
     private readonly renderer: PIXI.CanvasRenderer | PIXI.WebGLRenderer;
+    private readonly player: Player;
     private readonly gameBoard: GameBoard;
     private readonly livesBoard: LivesBoard;
     private readonly buttonsBar: ButtonsBar;
-    private readonly settingsDialidText = "Click on each board  raw to configure it before starting new game.\nClick arrows below to choose player lives count";
+    private readonly settingsDialogText = "Click on each board  raw to configure it before starting new game.\nClick arrows below to choose player lives count";
+    private isSettingsDialogShowed = false;
 
     public static curGameStatus: string;
 
     constructor(rendered: PIXI.CanvasRenderer | PIXI.WebGLRenderer) {
+        Game.curGameStatus == GameStatus.GameNotRunning
         this.renderer = rendered;
-        this.gameBoard = new GameBoard(() => this.onGameOver(), () => this.onLostLife());
-        this.livesBoard = new LivesBoard(() => this.onGameOver());
+        this.gameBoard = new GameBoard((isInFinish) => this.onGameOver(isInFinish), () => this.onLostLife());
+        this.player = this.gameBoard.player;
+        this.livesBoard = new LivesBoard(this.player);
         this.buttonsBar = new ButtonsBar(() => this.onNewGameRequest(), () => this.onSettingsDialogRequest())
     }
 
@@ -39,38 +46,39 @@ export class Game {
     }
 
     private onLostLife() {
-        if (Player.livesCount > 0) {
-            Player.livesCount--;
-            this.livesBoard.buildStage("gameRunning", Player.livesCount);
-        }
-        if (Player.livesCount == 0)
-            this.livesBoard.buildStage("lossGame", Player.livesCount)
+        this.livesBoard.onLostLife();
     }
 
-    private onGameOver(): void {
-        if (this.gameBoard.isOnFinish) {
-            this.livesBoard.buildStage("winGame");
-            Game.curGameStatus = "winGame"
+    private onGameOver(isInFinish?: boolean): void {
+        if (isInFinish) {
+            Game.curGameStatus = GameStatus.WonGame;
+            this.livesBoard.buildStage(Game.curGameStatus);
+        }else{
+            this.player.setLivesCount(0);
+            this.livesBoard.buildStage(GameStatus.LostGame, this.player.livesCount)
+
         }
-        Game.curGameStatus = "gameNotRunning";
+        Game.curGameStatus = GameStatus.GameNotRunning;
     }
 
-    private onNewGameRequest(): void {
+    private onNewGameRequest(): void { 
+        Game.curGameStatus = GameStatus.GameRunning;
+        if(!this.gameBoard.isCustomRawConfig)
+            this.player.setLivesCount(5);
         this.gameBoard.startNewGame();
-        this.gameBoard.player.reset();
-        if (Player.livesCount <= 0 || Game.curGameStatus == "winGame")
-            Player.livesCount = 5;
-        Game.curGameStatus = "gameRunning";
-        this.livesBoard.buildStage("gameRunning", Player.livesCount);
+        this.player.reset();
+        this.livesBoard.buildStage( Game.curGameStatus, this.player.getLivesCount());
     }
 
     private onSettingsDialogRequest(): void {
-        var obj = new SettingsDialogue(this, this.settingsDialidText);
-        obj.show();
-    }
-
-    public onSettingsAllowedRequest(): void {
+        Game.curGameStatus = GameStatus.GameNotRunning;
         this.gameBoard.changeRawTypeOnClick();
-        this.livesBoard.buildStage("settingsAllowed", Player.livesCount);
+        this.gameBoard.isCustomRawConfig = true;
+        this.livesBoard.buildStage("settingsAllowed", this.player.livesCount);
+        if(!this.isSettingsDialogShowed){
+            var obj = new SettingsDialogue(this, this.settingsDialogText);
+            obj.show();
+            this.isSettingsDialogShowed = true;
+        }
     }
 }

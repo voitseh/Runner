@@ -10,8 +10,7 @@ export class RawItem {
   public allObstacles: any[]
 
   constructor(private imgPath: string, public posX: number, public posY: number) {
-    let texture = PIXI.loader.resources[imgPath].texture;
-    let sprite = new PIXI.Sprite(texture);
+    let sprite = PIXI.Sprite.fromFrame(imgPath);
     sprite.width = Setting.RAW_WIDTH;
     sprite.height = Setting.RAW_HEIGHT;
     sprite.position.x = posX;
@@ -39,8 +38,4 @@ export class RawItem {
   public getPosition(): [number, number] {
     return [this.posX, this.posY]
   }
-}
-export enum Direction {
-  Left,
-  Right
 }

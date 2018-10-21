@@ -1,10 +1,11 @@
 import 'pixi.js';
 import { RenderableElement } from "../../utilities/RenderableElement";
 import { GameBoard } from "../board/GameBoard";
-import { Setting } from "../../Settings";
+import { Setting, GameStatus } from "../../Settings";
 import { ColorScheme } from "../../utilities/ColorScheme";
 import { Container, Sprite } from 'pixi.js';
 import { Player } from '../../utilities/Player';
+import { Game } from '../../Game';
 
 export class LivesBoard implements RenderableElement {
 
@@ -13,12 +14,12 @@ export class LivesBoard implements RenderableElement {
     private livesText: PIXI.Text;
     private livesLabelText: PIXI.Text;
     private gameresultText: PIXI.Text;
-    private readonly onGameOver: () => void;
     private stage: PIXI.Container;
+    private player: Player;
 
-    constructor(onGameOver: () => void) {
-        this.onGameOver = onGameOver;
-        this.stage = this.buildStage("gameNotRunning", Player.livesCount);
+    constructor(player: Player) {
+        this.player = player;
+        this.stage = this.buildStage(GameStatus.GameNotRunning, this.player.getLivesCount());
     }
     public buildStage(gameStatus: string, livesCount: number = 5): PIXI.Container {
         if (this.stage != undefined)
@@ -43,13 +44,13 @@ export class LivesBoard implements RenderableElement {
                 break;
             case "gameNotRunning":
                 break;
-            case "winGame":
+            case "wonGame":
                 this.gameresultText = this.buildResultText("WIN");
                 stage.addChild(this.buildResultRect());
                 stage.addChild(this.gameresultText);
                 break;
-            case "lossGame":
-                this.gameresultText = this.buildResultText("LOSS");
+            case "lostGame":
+                this.gameresultText = this.buildResultText("LOST");
                 stage.addChild(this.buildResultRect());
                 stage.addChild(this.gameresultText);
                 break;
@@ -122,13 +123,12 @@ export class LivesBoard implements RenderableElement {
     }
 
     private getArrowStages(): Container[] {
-        return [this.stageInfo("./images/ui/arrow_left.png", Setting.CANVAS_WIDTH / 2 - Setting.ARROW_WIDTH - 20, LivesBoard.CANVAS_MARGIN_TOP + Setting.HEIGHT / 2 - Setting.LIVES_CIRCLE_RADIUS),
-        this.stageInfo("./images/ui/arrow_right.png", Setting.CANVAS_WIDTH / 2 + 20, LivesBoard.CANVAS_MARGIN_TOP + Setting.HEIGHT / 2 - Setting.LIVES_CIRCLE_RADIUS)];
+        return [this.stageInfo("arrow_left.png", Setting.CANVAS_WIDTH / 2 - Setting.ARROW_WIDTH - 20, LivesBoard.CANVAS_MARGIN_TOP + Setting.HEIGHT / 2 - Setting.LIVES_CIRCLE_RADIUS),
+        this.stageInfo("arrow_right.png", Setting.CANVAS_WIDTH / 2 + 20, LivesBoard.CANVAS_MARGIN_TOP + Setting.HEIGHT / 2 - Setting.LIVES_CIRCLE_RADIUS)];
     }
 
     private stageInfo(imageAddress: string, posX: number, posY: number): Container {
-        let texture = PIXI.loader.resources[imageAddress].texture;
-        let sprite = new PIXI.Sprite(texture);
+        let sprite = PIXI.Sprite.fromFrame(imageAddress);
         sprite.width = Setting.ARROW_WIDTH;
         sprite.height = Setting.ARROW_HEIGHT;
         sprite.position.x = posX;
@@ -138,18 +138,6 @@ export class LivesBoard implements RenderableElement {
         sprite.interactive = true;
         sprite.on('click', () => this.setCustomLivesCount(sprite));
         return stage;
-    }
-
-    private setCustomLivesCount(sprite: Sprite) {
-        if (sprite.position.x == Setting.CANVAS_WIDTH / 2 - Setting.ARROW_WIDTH - 20) {
-            if (Player.livesCount > 0)
-                Player.livesCount--;
-        } else {
-            if (Player.livesCount < 9)
-                Player.livesCount++;
-        }
-        if (Player.livesCount > 0 && Player.livesCount < 10)
-            this.buildStage("settingsAllowed", Player.livesCount);
     }
 
     //game result label
@@ -172,6 +160,38 @@ export class LivesBoard implements RenderableElement {
         resultText.x = xPosition;
         resultText.y = LivesBoard.CANVAS_MARGIN_TOP + 23;
         return resultText;
+    }
+
+    public onLostLife(){
+        let livesCount = this.player.getLivesCount();
+        if (livesCount > 0) {
+            livesCount--;
+            this.player.setLivesCount(livesCount)
+            Game.curGameStatus = GameStatus.GameRunning;
+            this.buildStage(Game.curGameStatus, livesCount);
+        }
+        if (livesCount == 0){ 
+            Game.curGameStatus = GameStatus.LostGame;
+            this.buildStage(Game.curGameStatus, livesCount);
+            Game.curGameStatus = GameStatus.GameNotRunning;
+        }
+
+    }
+
+    private setCustomLivesCount(sprite: Sprite) {
+        let livesCount = this.player.getLivesCount();
+        if (sprite.position.x == Setting.CANVAS_WIDTH / 2 - Setting.ARROW_WIDTH - 20) {
+            if (livesCount > 0){
+                livesCount--;
+                this.player.setLivesCount(livesCount)
+            }
+        } else {
+            if (livesCount < 9){
+                livesCount++;
+                this.player.setLivesCount(livesCount);
+            }
+        }
+        this.buildStage("settingsAllowed", livesCount);
     }
 
     public getStage(): PIXI.Container {

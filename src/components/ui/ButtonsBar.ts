@@ -2,6 +2,7 @@ import { RenderableElement } from "../../utilities/RenderableElement";
 import { GameBoard } from "../board/GameBoard";
 import { LivesBoard } from "./LivesBoard";
 import { Setting } from "../../Settings";
+import { Container } from "pixi.js";
 
 export class ButtonsBar implements RenderableElement {
     
@@ -15,32 +16,23 @@ export class ButtonsBar implements RenderableElement {
         this.onNewGameRequest = onNewGameRequest;
         this.onSettingsDialogRequest = onSettingsDialogRequest;
 
-        let newGameButton = new PIXI.Container();
-        let newGameButtonSprite = new PIXI.Sprite(
-            PIXI.loader.resources["./images/ui/new.png"].texture
-        );
-        newGameButtonSprite.position.x = Setting.BUTTON_MARGIN;
-        newGameButtonSprite.position.y = Setting.CANVAS_MARGIN_TOP;
-        newGameButtonSprite.width = Setting.BUTTON_WIDTH_HEIGHT;
-        newGameButtonSprite.height = Setting.BUTTON_WIDTH_HEIGHT;
+        this.newGameButton = this.createButton("new.png", Setting.BUTTON_MARGIN, Setting.CANVAS_MARGIN_TOP, () => this.onNewGameRequest());
+        let settingsBttnPosX = Setting.BOARD_WIDTH - Setting.BUTTON_WIDTH_HEIGHT - Setting.BUTTON_MARGIN;
+        this.settingsButton = this.createButton("settings.png", settingsBttnPosX,  Setting.CANVAS_MARGIN_TOP, () => this.onSettingsDialogRequest());
+    }
 
-        newGameButtonSprite.interactive = true;
-        newGameButtonSprite.on('click', () => this.onNewGameRequest());
-        newGameButton.addChild(newGameButtonSprite);
-        this.newGameButton = newGameButton;
+    private createButton(spriteName: string, posX: number, posY: number, callback: ()=> void):Container{
+        let button = new PIXI.Container();
+        let buttonSprite =  PIXI.Sprite.fromFrame(spriteName);
+        buttonSprite.position.x = posX;
+        buttonSprite.position.y = posY;
+        buttonSprite.width = Setting.BUTTON_WIDTH_HEIGHT;
+        buttonSprite.height = Setting.BUTTON_WIDTH_HEIGHT;
 
-        let settingsButton = new PIXI.Container();
-        let settingsButtonSprite = new PIXI.Sprite(
-            PIXI.loader.resources["./images/ui/settings.png"].texture
-        );
-        settingsButtonSprite.position.x = Setting.BOARD_WIDTH - Setting.BUTTON_WIDTH_HEIGHT - Setting.BUTTON_MARGIN;
-        settingsButtonSprite.position.y = Setting.CANVAS_MARGIN_TOP;
-        settingsButtonSprite.width = Setting.BUTTON_WIDTH_HEIGHT;
-        settingsButtonSprite.height = Setting.BUTTON_WIDTH_HEIGHT;
-        settingsButtonSprite.interactive = true;
-        settingsButtonSprite.on('click', () => this.onSettingsDialogRequest());
-        settingsButton.addChild(settingsButtonSprite);
-        this.settingsButton = settingsButton;
+        buttonSprite.interactive = true;
+        buttonSprite.on('click', callback);
+        button.addChild(buttonSprite);
+        return button;
     }
 
     public getStage(): PIXI.Container {

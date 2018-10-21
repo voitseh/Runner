@@ -6,9 +6,8 @@ export class Tree extends Obstacle {
 
     public obstacleType = "tree"
 
-
     constructor(public posX: number, public posY: number) {
-        super("./images/obstacles/tree.png", posX, posY)
+        super("tree.png", posX, posY)
     }
 
     public checkCollisionWithPlayer(player: Player): any {

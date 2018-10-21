@@ -11,41 +11,41 @@ export class Setting {
     public static PLAYER_WIDTH = 17;
     public static PLAYER_HEIGHT = 25;
     public static readonly FORWARD_FRAME_LIST = [
-        "./images/player/forward1.png",
-        "./images/player/forward2.png",
-        "./images/player/forward3.png",
+        "forward1.png",
+        "forward2.png",
+        "forward3.png",
       ];
     
     public static readonly BACK_FRAME_LIST = [
-        "./images/player/back1.png",
-        "./images/player/back2.png",
-        "./images/player/back3.png",
+        "back1.png",
+        "back2.png",
+        "back3.png",
       ];
     
     public static readonly LEFT_FRAME_LIST = [
-        "./images/player/left1.png",
-        "./images/player/left2.png",
-        "./images/player/left3.png",
+        "left1.png",
+        "left2.png",
+        "left3.png",
       ];
     
     public static readonly RIGHT_FRAME_LIST = [
-        "./images/player/right1.png",
-        "./images/player/right2.png",
-        "./images/player/right3.png",
+        "right1.png",
+        "right2.png",
+        "right3.png",
       ];
     
     public static readonly DIE_FRAME_LIST = [
-        "./images/player/die1.png",
-        "./images/player/die2.png",
-        "./images/player/die3.png",
-        "./images/player/die4.png",
+        "die1.png",
+        "die2.png",
+        "die3.png",
+        "die4.png",
       ];
 
     public static readonly CAR_ADDRESSES = [
-        "./images/obstacles/car_red_right.png",
-        "./images/obstacles/car_red_left.png",
-        "./images/obstacles/car_white_right.png",
-        "./images/obstacles/car_white_left.png"
+        "car_red_right.png",
+        "car_red_left.png",
+        "car_white_right.png",
+        "car_white_left.png",
     ];
       
     public static readonly HEIGHT = 70;
@@ -76,3 +76,17 @@ export class Setting {
     public static readonly STARTBOARD_HEIGHT = 25;
   
 }
+
+export enum GameStatus {
+  GameRunning = "gameRunning",
+  GameNotRunning = "gameNotRunning",
+  GameRestart = "gameRestart",
+  WonGame = "wonGame",
+  LostGame = "lostGame"
+}
+
+export enum Direction {
+  Left,
+  Right
+}
+

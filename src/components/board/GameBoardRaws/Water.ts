@@ -1,10 +1,10 @@
-import { RawItem, Direction } from "./RawItem";
+import { RawItem } from "./RawItem";
 import { ObstacleFactory } from "../../../utilities/ObstacleFactory";
 import { Log } from "./Obstacles/Log";
 import { Utils } from "../../../utilities/Utils";
 import { Player } from "../../../utilities/Player";
 import { GameBoard } from "../GameBoard";
-import { Setting } from "../../../Settings";
+import { Setting, Direction } from "../../../Settings";
 
 export class Water extends RawItem {
 
@@ -14,13 +14,13 @@ export class Water extends RawItem {
     private carFirstSpeedInc: number;
     private carSecondSpeedInc: number;
     private obstaclesFactory: ObstacleFactory;
+    private newLog: Log = null;
 
     constructor(public posX: number, public posY: number) {
-        super("./images/lanes/water.png", posX, posY);
+        super("water.png", posX, posY);
         this.obstaclesFactory = new ObstacleFactory();
         this.carFirstSpeedInc = Utils.randomIntFromInterval(1, 3);
         this.carSecondSpeedInc = Utils.randomIntFromInterval(1, 3);
-        // let timerId = setInterval(() => this.allObstacles.push(this.createLogs()), 1000 | 2000 );
         this.setType("water")
     }
 
@@ -30,22 +30,26 @@ export class Water extends RawItem {
 
     public createLogs(): Log {
         this.movingDirection = this.chooseMovingDirection();
-        var newLog: Log = null;
         let logY = this.getPosY();
 
-        if (logY == this.logUpperStartPosY) {
-            newLog = this.obstaclesFactory.createObstacle("log", this.getPosX(), logY, "./images/log.png") as Log
-            newLog.speedInc = this.carFirstSpeedInc;
-            newLog.DIRECTION = this.movingDirection;
-        }
-        else {
-            newLog = this.obstaclesFactory.createObstacle("log", this.getPosX(), logY, "./images/log.png") as Log
-            newLog.speedInc = this.carSecondSpeedInc;
-            newLog.DIRECTION = this.movingDirection;
-        }
-        return newLog;
+        if (logY == this.logUpperStartPosY)
+           this.createUpperLogs(logY);
+        else 
+           this.createLowerLogs(logY);
+        return this.newLog;
     }
 
+    private createUpperLogs(posY: number){
+        this.newLog = this.obstaclesFactory.createObstacle("log", this.getPosX(), posY, "log.png") as Log
+        this.newLog.speedInc = this.carFirstSpeedInc;
+        this.newLog.DIRECTION = this.movingDirection;
+    }
+
+    private createLowerLogs(posY: number){
+        this.newLog = this.obstaclesFactory.createObstacle("log", this.getPosX(), posY, "log.png") as Log
+        this.newLog.speedInc = this.carSecondSpeedInc;
+        this.newLog.DIRECTION = this.movingDirection;
+    }
 
     public getPosX(): number {
         let x;

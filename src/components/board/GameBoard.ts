@@ -2,7 +2,7 @@ import 'pixi.js';
 
 import Container = PIXI.Container;
 import { RenderableElement } from "../../utilities/RenderableElement";
-import { RawItem, Direction } from "./GameBoardRaws/RawItem";
+import { RawItem } from "./GameBoardRaws/RawItem";
 import { BoardRawFactory } from "../../utilities/BoardRawFactory";
 import { UpdateableElement } from "../../utilities/UpdateableElement";
 import { Player } from '../../utilities/Player';
@@ -14,7 +14,8 @@ import { Water } from './GameBoardRaws/Water';
 import { Rectangle, } from 'pixi.js';
 import { Game } from '../../Game';
 import { Road } from './GameBoardRaws/Road';
-import { Setting } from '../../Settings';
+import { Setting, Direction, GameStatus } from '../../Settings';
+import { Grass } from './GameBoardRaws/Grass';
 
 export class GameBoard implements RenderableElement, UpdateableElement {
 
@@ -22,35 +23,36 @@ export class GameBoard implements RenderableElement, UpdateableElement {
     private raw_type_index = -1;
     private rawListInitial: string[] = ["road", "water", "grass", "road", "water", "grass", "road", "water", "grass", "road"]
     private rawPosYlist: number[] = [0, 40, 80, 120, 160, 200, 240, 280, 320, 360];
-
-    public allRaws: RawItem[] = [];
-
-    private gameBoardStage: Container;
-    public player: Player;
+    private gameBoardStage = new Container();
+    private rawFactory: BoardRawFactory;
     private startBoard: StartBoard;
     private finishBoard: FinishBoard;
-
     private isPlayerOnLog = false;
-    private readonly onGameOver: () => void;
-    private readonly removeLifeOnColision: () => void;
+    private readonly onGameOver: (isOnFinish: boolean) => void;
+    private readonly onLostLife: () => void;
+    public player: Player;
+    public allRaws: RawItem[] = [];
+    public isCustomRawConfig = false;
     public isOnFinish = false;
-    private rawFactory: BoardRawFactory;
 
-    constructor(onGameOver: () => void, removeLifeOnColision: () => void) {
+
+    constructor(onGameOver: (isOnFinish: boolean) => void, onLostLife: () => void) {
         this.onGameOver = onGameOver;
-        this.removeLifeOnColision = removeLifeOnColision;
+        this.onLostLife = onLostLife;
         const boardrawFactory = new BoardRawFactory();
         this.rawFactory = boardrawFactory;
-        this.buildBoardRawsSprites();
+        this.startNewGame();
         this.player = new Player(this);
         this.startBoard = new StartBoard();
         this.finishBoard = new FinishBoard();
     }
     private buildBoardRawsSprites() {
+        this.allRaws = [];
         this.rawPosYlist.forEach((posY, i) => { this.allRaws.push(this.rawFactory.createBoardRaw(this.rawListInitial[i], 0, posY)) })
     }
 
     public changeRawTypeOnClick() {
+        this.buildBoardRawsSprites();
         this.raw_type_index++;
         let clickedRawCoordY: number = null;
         let curRawType: [number, RawItem];
@@ -70,29 +72,38 @@ export class GameBoard implements RenderableElement, UpdateableElement {
     }
 
     public startNewGame(): void {
-        this.startCarsMoving();
-        this.startLogsMoving();
+        if (!this.isCustomRawConfig)
+            this.buildBoardRawsSprites();
+        this.createObstacles("grass");
+        this.createObstacles("road");
+        this.createObstacles("water");
+        this.isCustomRawConfig = false;
+        
     }
 
-    private startCarsMoving() {
+    private createObstacles(type: string) {
         this.allRaws.map(element => {
-            if (element.getType() == "road") {
-                element as Road;
-                element.startCarsMoving();
+            if (element.getType() == type) {
+                element.allObstacles.forEach(obstacles => obstacles.getStage().parent.removeChild(obstacles.getStage()));
+                element.allObstacles = [];
+                switch (type) {
+                    case "grass":
+                        element.createTrees();
+                        break;
+                    case "road":
+                        element.startCarsMoving();
+                        break;
+                    case "water":
+                        element.startLogsMoving();
+                        break;
+                    default:
+                        break;
+                }
             }
         });
     }
 
-    private startLogsMoving() {
-        this.allRaws.map(element => {
-            if (element.getType() == "water") {
-                element as Water;
-                element.startLogsMoving();
-            }
-        });
-    }
-
-    public checkCollision() {
+    public checkCollisionNonstop() {
         let isCollide: boolean;
         this.allRaws.map(element => element.allObstacles)
             .forEach(obstacles => obstacles.forEach((obstacle: any) => {
@@ -107,58 +118,88 @@ export class GameBoard implements RenderableElement, UpdateableElement {
             }))
     }
 
-    public checkPlayerInWaterArea() {
+    public checkCollisionAfterStep() {
+        this.checkFinish();
+        this.checkWater();
+    }
+
+    private checkFinish() { 
         this.isOnFinish = this.finishBoard.checkPlayerIntersection(this.player);
-        if (this.isOnFinish)
-            this.onGameOver();
+        if (this.isOnFinish && Game.curGameStatus == GameStatus.GameRunning) {
+            this.player.reset();
+            this.onGameOver(this.isOnFinish);
+        }
+    }
+
+    private checkWater() {
         this.allRaws.map(element => {
             if (element.getType() == "water") {
                 element = (element as Water);
                 if (element.checkPlayerInWater(this.player)) {
-
-                    this.checkCollision()
-                    if (!this.isPlayerOnLog &&
-                        !this.startBoard.checkPlayerIntersection(this.player) &&
-                        !this.isOnFinish) {
-                        this.removeLifeOnColision();
-                        this.player.reset();
-                    }
+                    this.checkCollisionNonstop();
+                    this.onPlayerOnWaterButNotOnLog();
                 } else
                     this.isPlayerOnLog = false;
             }
         })
     }
 
+    private onPlayerOnWaterButNotOnLog() {
+        if (!this.isPlayerOnLog &&
+            !this.startBoard.checkPlayerIntersection(this.player) &&
+            !this.isOnFinish) {
+            this.onLostLife();
+            this.player.reset();
+        }
+    }
 
     public onCollision(obstacle: Obstacle): any {
         if (obstacle.obstacleType == "tree") {
-            this.player.sprite.x = this.player.sprite.x + 1;
-            this.player.sprite.y = this.player.sprite.y + 1;
+            this.onCollisionWithTree();
         }
         if (obstacle.obstacleType == "log") {
             this.isPlayerOnLog = true;
             obstacle = (obstacle as Log)
-
-            if (obstacle.DIRECTION == Direction.Left && this.player.sprite.x > 0)
-                this.player.sprite.x -= (Setting.GAME_SPEED_X / 80 + obstacle.speedInc / 2);
-            else if (obstacle.DIRECTION == Direction.Left){
-                this.removeLifeOnColision();
-                this.player.updateTextureDie();
-            }
-
-            if (obstacle.DIRECTION == Direction.Right && this.player.sprite.x < Setting.BOARD_WIDTH - Setting.OBSTACLE_WIDTH)
-                this.player.sprite.x += (Setting.GAME_SPEED_X / 80 + obstacle.speedInc / 2);
-            else if (obstacle.DIRECTION == Direction.Right){
-                this.removeLifeOnColision();
-                this.player.updateTextureDie();
-            }
-        } else 
+            this.onCollisionWithLog(obstacle);
+        } else
             this.isPlayerOnLog = false;
 
         if (obstacle.obstacleType == "car") {
-            this.player.reset();
-            this.removeLifeOnColision();
+            this.onCollisionWithCar();
         }
+    }
+
+    private onCollisionWithTree() {
+        this.player.sprite.x = this.player.sprite.x + 1;
+        this.player.sprite.y = this.player.sprite.y + 1;
+    }
+
+    private onCollisionWithLog(obstacle: Obstacle) {
+        this.onCollisionWithLeftDirectedLog(obstacle);
+        this.onCollisionWithRightDirectedLog(obstacle);
+    }
+
+    private onCollisionWithLeftDirectedLog(obstacle: Obstacle) {
+        if (obstacle.DIRECTION == Direction.Left && this.player.sprite.x > 0)
+            this.player.sprite.x -= (Setting.GAME_SPEED_X / 80 + obstacle.speedInc / 2);
+        else if (obstacle.DIRECTION == Direction.Left) {
+            this.player.reset();
+            this.onGameOver(this.isOnFinish);
+        }
+    }
+
+    private onCollisionWithRightDirectedLog(obstacle: Obstacle) {
+        if (obstacle.DIRECTION == Direction.Right && this.player.sprite.x < Setting.BOARD_WIDTH - Setting.OBSTACLE_WIDTH)
+            this.player.sprite.x += (Setting.GAME_SPEED_X / 80 + obstacle.speedInc / 2);
+        else if (obstacle.DIRECTION == Direction.Right) {
+            this.player.reset();
+            this.onGameOver(this.isOnFinish);
+        }
+    }
+
+    private onCollisionWithCar() {
+        this.player.reset();
+        this.onLostLife();
     }
 
     public update(): void {
@@ -167,21 +208,36 @@ export class GameBoard implements RenderableElement, UpdateableElement {
     }
 
     public getStage(): PIXI.Container {
-        let stage = new Container();
+        this.addRaws();
+        this.addRawObstacles();
+        this.addStartStopPlaces();
+        this.addPlayer();
+        this.gameBoardStage.interactive = true;
+        this.checkCollisionNonstop();  
+        return this.gameBoardStage;
+    }
 
+    private addRaws() {
         this.allRaws.forEach(
-            (rawItem, i) => stage.addChild(rawItem.getStage())
+            (rawItem, i) => this.gameBoardStage.addChild(rawItem.getStage())
         )
-        this.allRaws.map(element => element.allObstacles)
-            .forEach(obstacles => obstacles.forEach((obstacle: any) => stage.addChild(obstacle.getStage())))
+    }
 
-        stage.addChild(this.startBoard.getStage());
-        stage.addChild(this.finishBoard.getStage());
+    private addRawObstacles() {
+        if (Game.curGameStatus == GameStatus.GameRunning)
+            this.allRaws.map(element => element.allObstacles)
+                .forEach(obstacles => obstacles.forEach((obstacle: any) => this.gameBoardStage.addChild(obstacle.getStage())))
+        else
+            this.allRaws.map(element => element.allObstacles = [])
+    }
 
-        stage.addChild(this.player.getStage());
-        stage.interactive = true;
-        this.checkCollision();
-        this.gameBoardStage = stage;
-        return stage;
+    private addStartStopPlaces() {
+        this.gameBoardStage.addChild(this.startBoard.getStage());
+        this.gameBoardStage.addChild(this.finishBoard.getStage());
+    }
+
+    private addPlayer() {
+        if (Game.curGameStatus == GameStatus.GameRunning)
+            this.gameBoardStage.addChild(this.player.getStage());
     }
 }

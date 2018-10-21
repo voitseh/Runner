@@ -10,8 +10,7 @@ export class StartBoard {
     protected sprite: Sprite;
 
     constructor(posX: number = 250, posY: number = 375) {
-        let texture = PIXI.loader.resources["./images/start_end.png"].texture;
-        let sprite = new PIXI.Sprite(texture);
+        let sprite =  PIXI.Sprite.fromFrame("start_end.png");
         sprite.width = Setting.STARTBOARD_WADTH;
         sprite.height = Setting.STARTBOARD_HEIGHT;
         sprite.position.x = posX;
