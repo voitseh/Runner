@@ -21,7 +21,6 @@ export class Game {
     public static curGameStatus: string;
 
     constructor(rendered: PIXI.CanvasRenderer | PIXI.WebGLRenderer) {
-        Game.curGameStatus == GameStatus.GameNotRunning
         this.renderer = rendered;
         this.gameBoard = new GameBoard((isInFinish) => this.onGameOver(isInFinish), () => this.onLostLife());
         this.player = this.gameBoard.player;
