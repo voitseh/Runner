@@ -1,9 +1,6 @@
-import { Obstacle } from "../components/board/GameBoardRaws/Obstacles/Obstacle";
 import { Container } from "pixi.js";
-import { RawItem } from "../components/board/GameBoardRaws/RawItem";
 import { GameBoard } from "../components/board/GameBoard";
-import { Setting, GameStatus } from "../Settings";
-import { Game } from "../Game";
+import { Setting} from "../Settings";
 
 export class Player {
 
@@ -32,16 +29,16 @@ export class Player {
 
       switch (e.keyCode) {
         case 65: case 37:  //left
-          this.onKeyClick(this.updateTextureLeft(), this.updateSpriteLeft());
+          this.onKeyClick(this.updateTextureLeft.bind(this), this.updateSpriteLeft.bind(this));
           break;
         case 38: case 87:  //forward
-          this.onKeyClick(this.updateTextureForward(), this.updateSpriteForward());
+          this.onKeyClick(this.updateTextureForward.bind(this), this.updateSpriteForward.bind(this));
           break;
         case 39: case 68: //right
-          this.onKeyClick(this.updateTextureRight(), this.updateSpriteRight());
+          this.onKeyClick(this.updateTextureRight.bind(this), this.updateSpriteRight.bind(this));
           break;
         case 40: case 83: //down
-          this.onKeyClick(this.updateTextureBack(), this.updateSpriteBack());
+          this.onKeyClick(this.updateTextureBack.bind(this), this.updateSpriteBack.bind(this));
           break;
         default:
           break;
@@ -49,8 +46,9 @@ export class Player {
     });
   }
 
-  private onKeyClick(updateTexture: void, updateSprite: void) {
-    updateTexture;
+  private onKeyClick(updateTexture: () => void, updateSprite: () => void) {
+    updateTexture();
+    updateSprite();
     this.gameBoard.checkCollisionAfterStep();
   }
 
@@ -60,41 +58,36 @@ export class Player {
     if (this.textureCounter === frameList.length) this.textureCounter = 0;
   }
 
-  private updateTextureForward = () => { 
-    this.updateTexture(Setting.FORWARD_FRAME_LIST);
-  }
+  private updateTextureForward = () => this.updateTexture(Setting.FORWARD_FRAME_LIST);
 
-  private updateTextureBack = () => {
-    this.updateTexture(Setting.BACK_FRAME_LIST);
-  }
 
-  private updateTextureLeft = () => {
-    this.updateTexture(Setting.LEFT_FRAME_LIST);
-  }
+  private updateTextureBack = () => this.updateTexture(Setting.BACK_FRAME_LIST);
 
-  private updateTextureRight = () => {
-    this.updateTexture(Setting.RIGHT_FRAME_LIST);
-  }
 
-  public updateTextureDie = () => {
-    this.updateTexture(Setting.DIE_FRAME_LIST);  
-  }
+  private updateTextureLeft = () => this.updateTexture(Setting.LEFT_FRAME_LIST);
+
+
+  private updateTextureRight = () => this.updateTexture(Setting.RIGHT_FRAME_LIST);
+
+
+  public updateTextureDie = () => this.updateTexture(Setting.DIE_FRAME_LIST);
+
  
   private updateSpriteForward = () => {
     if (!(this.sprite.y < -this.sprite.height / 2)) this.sprite.y -= this.speed;
-  }
+  };
 
   private updateSpriteBack = () => {
     if (!(this.sprite.y > Setting.BOARD_HEIGHT - this.sprite.height)) this.sprite.y += this.speed;
-  }
+  };
 
   private updateSpriteLeft = () => {
     if (!(this.sprite.x < this.sprite.width / 2)) this.sprite.x -= this.speed;
-  }
+  };
 
   private updateSpriteRight = () => {
     if (!(this.sprite.x > Setting.BOARD_WIDTH - this.sprite.width - 5)) this.sprite.x += this.speed;
-  }
+  };
 
   public setLivesCount(livesCount: number){
     this.livesCount = livesCount;

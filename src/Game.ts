@@ -21,9 +21,9 @@ export class Game {
     public static curGameStatus: string;
 
     constructor(rendered: PIXI.CanvasRenderer | PIXI.WebGLRenderer) {
-        Game.curGameStatus == GameStatus.GameNotRunning
         this.renderer = rendered;
-        this.gameBoard = new GameBoard((isInFinish) => this.onGameOver(isInFinish), () => this.onLostLife());
+        this.gameBoard = new GameBoard(this.onGameOver.bind(this),  this.onLostLife.bind(this));
+
         this.player = this.gameBoard.player;
         this.livesBoard = new LivesBoard(this.player);
         this.buttonsBar = new ButtonsBar(() => this.onNewGameRequest(), () => this.onSettingsDialogRequest())
@@ -39,7 +39,7 @@ export class Game {
             this.gameBoard,
             this.livesBoard,
             this.buttonsBar
-        ] as Array<RenderableElement>)
+        ] as RenderableElement[])
             .map(element => element.getStage())
             .forEach(stage => rootStage.addChild(stage));
         this.renderer.render(rootStage);

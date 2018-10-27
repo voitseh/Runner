@@ -1,13 +1,10 @@
 import 'pixi.js';
-import Sprite = PIXI.Sprite;
 
 import { Setting } from "./Settings";
 import { Game } from "./Game";
 
 function onLoad(): void {
-    
-    PIXI.loader
-    PIXI.loader.add("../../images/spritesheet.json").load(setup)
+    PIXI.loader.add("images/spritesheet.json").load(setup)
     function setup(): void {
 
         let renderer = PIXI.autoDetectRenderer(
@@ -26,4 +23,4 @@ function onLoad(): void {
     }
 }
 
-window.onload = () => onLoad();
+window.onload = () => {onLoad();}

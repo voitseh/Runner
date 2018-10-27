@@ -6,7 +6,7 @@ import { RawItem } from "./GameBoardRaws/RawItem";
 import { BoardRawFactory } from "../../utilities/BoardRawFactory";
 import { UpdateableElement } from "../../utilities/UpdateableElement";
 import { Player } from '../../utilities/Player';
-import { Obstacle } from './GameBoardRaws/Obstacles/Obstacle';
+import {Obstacle} from './GameBoardRaws/Obstacles/Obstacle';
 import { Log } from './GameBoardRaws/Obstacles/Log';
 import { StartBoard } from "./GameBoardRaws/Obstacles/StartBoard";
 import { FinishBoard } from "./GameBoardRaws/Obstacles/FinishBoard";
@@ -19,7 +19,7 @@ import { Grass } from './GameBoardRaws/Grass';
 
 export class GameBoard implements RenderableElement, UpdateableElement {
 
-    private raw_types: string[] = ["road", "water", "grass"];
+    private raw_types: string[] = ["road", "water", "grass"]; 
     private raw_type_index = -1;
     private rawListInitial: string[] = ["road", "water", "grass", "road", "water", "grass", "road", "water", "grass", "road"]
     private rawPosYlist: number[] = [0, 40, 80, 120, 160, 200, 240, 280, 320, 360];
@@ -44,7 +44,7 @@ export class GameBoard implements RenderableElement, UpdateableElement {
         this.startNewGame();
         this.player = new Player(this);
         this.startBoard = new StartBoard();
-        this.finishBoard = new FinishBoard();
+        this.finishBoard = new FinishBoard(); 
     }
     private buildBoardRawsSprites() {
         this.allRaws = [];
@@ -88,13 +88,13 @@ export class GameBoard implements RenderableElement, UpdateableElement {
                 element.allObstacles = [];
                 switch (type) {
                     case "grass":
-                        element.createTrees();
+                        (element as Grass).createTrees();
                         break;
                     case "road":
-                        element.startCarsMoving();
+                        (element as Road).startCarsMoving();
                         break;
                     case "water":
-                        element.startLogsMoving();
+                        (element as Water).startLogsMoving();
                         break;
                     default:
                         break;
@@ -134,8 +134,7 @@ export class GameBoard implements RenderableElement, UpdateableElement {
     private checkWater() {
         this.allRaws.map(element => {
             if (element.getType() == "water") {
-                element = (element as Water);
-                if (element.checkPlayerInWater(this.player)) {
+                if ((element as Water).checkPlayerInWater(this.player)) {
                     this.checkCollisionNonstop();
                     this.onPlayerOnWaterButNotOnLog();
                 } else
@@ -159,7 +158,7 @@ export class GameBoard implements RenderableElement, UpdateableElement {
         }
         if (obstacle.obstacleType == "log") {
             this.isPlayerOnLog = true;
-            obstacle = (obstacle as Log)
+            // obstacle = (obstacle as Log)
             this.onCollisionWithLog(obstacle);
         } else
             this.isPlayerOnLog = false;
